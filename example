@@ -1,14 +1,16 @@
 package main
 import coff"shared:coff"
+
 main::proc()
 {
   code := 0x48_8d_05_00000000;
   
   obj := coff.coff_init();
   
-  // writes to the coff header
+  // begins writting at the coff header 
   coff.coff_begin_coff(&obj);
   
+  // Pushed symbols to the symbol table
   coff.coff_push_symbol(&obj, "start", 0, coff.IMAGE_SYM_DTYPE_FUNCTION, 0, 0, coff.IMAGE_SYM_CLASS_EXTERNAL);
   coff.coff_push_symbol(&obj, "Hello", 0, 0, 1, 0, coff.IMAGE_SYM_CLASS_EXTERNAL);
   
