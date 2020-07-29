@@ -1,0 +1,27 @@
+import coff"shared:coff";
+main::proc()`
+{
+  code := 0x48_8d_05_00000000;
+  
+  obj := coff.coff_init();
+  
+  // writes to the coff header
+  coff.coff_begin_coff(&obj);
+  
+  coff.coff_push_symbol(&obj, "start", 0, IMAGE_SYM_DTYPE_FUNCTION, 0, 0, IMAGE_SYM_CLASS_EXTERNAL);
+  coff.coff_push_symbol(&obj, "Hello", 0, 0, 1, 0, IMAGE_SYM_CLASS_EXTERNAL);
+  
+  coff.coff_begin_section(&obj, SECT_TEXT);
+  coff.coff_push_raw_data(&obj, &code, 8);
+  coff.push_relocation(&obj, 3, 1, IMAGE_REL_AMD64_REL32);
+  coff.coff_end_section(&obj);
+  
+  h :cstring= "Hello";
+  coff.coff_begin_section(&obj, SECT_DATA);
+  coff.coff_push_raw_data(&obj, &h, cast(u32)len(h));
+  coff.coff_end_section(&obj);
+  
+  // returns the buffer containing the data and the size
+  buffer,sz := coff.coff_end_coff(&obj)
+  // after just write to any file
+}
